@@ -13,7 +13,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   handleMessage(client: Socket, payload: any): void {
     this.c_message.name = `${client.id}`
     this.c_message.text = payload.text
-    // this.server.emit('msgToClient', this.c_message);
+    this.server.emit('msgToClient', this.c_message);
   }
   
   afterInit(server: any) {
@@ -35,6 +35,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   }
   @SubscribeMessage('JoinRoom')
   onChgEvent(client: Socket, payload: any): void {
-    
+    this.client.join('aRoom');
+    this.client.to('aRoom').emit('msgToClient', this.c_message);
   }
 }
