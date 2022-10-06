@@ -10,10 +10,11 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
    }
   
   @SubscribeMessage('msgToServer')
-  handleMessage(client: Socket, payload: any): void {
+  handleMessage(client: Socket, payload: any, roomName : string): void {
     this.c_message.name = `${client.id}`
     this.c_message.text = payload.text
-    this.server.emit('msgToClient', this.c_message);
+    // this.server.emit('msgToClient', this.c_message);
+    this.server.to(roomName).emit('msgToClient', this.c_message);
   }
   
   afterInit(server: any) {
@@ -31,11 +32,14 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     this.c_message.text = "has joined chat"
     client.broadcast.emit('msgToClient', this.c_message);
     
+    
 
   }
   @SubscribeMessage('JoinRoom')
-  onChgEvent(client: Socket, payload: any): void {
-    this.client.join('aRoom');
-    this.client.to('aRoom').emit('msgToClient', this.c_message);
+  onChgEvent(client: Socket, roomName: string): void {
+    this.c_message.name = `${client.id}`
+    this.c_message.text = "joined room ";
+    client.join(roomName);
+    client.to(roomName).emit('msgToClient', this.c_message);
   }
 }

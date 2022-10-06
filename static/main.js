@@ -5,7 +5,8 @@ const app = new Vue({
      name: '',
      text: '',
      messages: [],
-     socket: null
+     socket: null,
+     room : ''
     },
     methods: {
      sendMessage() {
@@ -14,7 +15,7 @@ const app = new Vue({
        name: this.name,
        text: this.text
       }
-      this.socket.emit('msgToServer', message)
+      this.socket.emit('msgToServer', message, this.room)
       this.text = ''
      }
     },
@@ -39,10 +40,11 @@ const app = new Vue({
           getVars[tmp[0]] = tmp[1];
       });
       console.log(getVars['test']);
+      this.room = getVars['test']
       // do 
     }
 
-        this.socket.emit('JoinRoom', getVars['test'])
+      this.socket.emit('JoinRoom', this.room)
      this.socket.on('msgToClient', (message) => {
       this.receivedMessage(message)
      })
